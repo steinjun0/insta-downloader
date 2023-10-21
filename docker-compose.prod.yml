@@ -1,0 +1,13 @@
+version: "3.8"
+
+services:
+  prod-insta-downloader-nextjs:
+    container_name: prod-insta-downloader-nextjs
+    build:
+      context: ./
+      dockerfile: ./Dockerfile # context 경로 기준 상대경로
+      target: production
+networks:
+  default:
+    external: true
+    name: nginx-proxy-manager_default

@@ -1,0 +1,14 @@
+version: "3.8"
+
+services:
+  dev-insta-downloader-nextjs:
+    container_name: dev-insta-downloader-nextjs
+    command: sh -c 'cd /root/src/insta-downloader-nextjs && 
+                    npm install && tail -f /dev/null'
+    build:
+      context: ./
+      dockerfile: ./Dockerfile # context 경로 기준 상대경로
+      target: development
+    volumes:
+      # docker-comose 파일 경로 기준 상대 경로
+      - ./:/root/src
