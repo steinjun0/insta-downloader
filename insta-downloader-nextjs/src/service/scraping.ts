@@ -28,6 +28,8 @@ class Timer {
 export async function scrap(url: string): Promise<any> {
 
   const timer = new Timer();
+
+  // [[[ start puppeteer launch ]]]
   timer.start();
   const browser = await puppeteer.launch({ headless: "new", args: ['--no-sandbox', '--lang=ko-KR'] });
   // --no-sandbox 를 추가해야 docker에서 동작한다
@@ -36,20 +38,26 @@ export async function scrap(url: string): Promise<any> {
   timer.end();
   timer.printSec('puppeteer launch');
 
+  // [[[ start new page ]]]
   timer.start();
   const page = await browser.newPage();
   timer.end();
   timer.printSec('open new page');
 
-
+  // [[[ start page goto ]]]
   timer.start();
   // 인스타그램의 게시물 URL로 이동
-  await page.goto(url, { waitUntil: 'networkidle0' });
+  await page.goto(url);
+  try {
+    await page.waitForSelector("div[role='button'] img", { visible: true, timeout: 10000 });
+  } catch (error) {
+    console.error("The image did not load within the specified timeout.");
+  }
   timer.end();
   timer.printSec('page goto');
 
+  // [[[ start page evaluate ]]]
   timer.start();
-
   const mainImgsSet = new Set<string>();
   while (true) {
 
@@ -76,14 +84,13 @@ export async function scrap(url: string): Promise<any> {
       break;
     }
   }
-
-
   timer.end();
   timer.printSec('page evaluate');
 
   await browser.close(); // 브라우저 닫기
   const mainImgSrcs = Array.from(mainImgsSet);
 
+  // [[[ start encode images ]]]
   // 이미지를 Base64로 인코딩
   timer.start();
   const imagesBase64 = await Promise.all(
@@ -96,7 +103,7 @@ export async function scrap(url: string): Promise<any> {
     })
   );
   timer.end();
-  timer.printSec('convert images');
+  timer.printSec('encode images');
 
   return imagesBase64;
 }
