@@ -89,9 +89,10 @@ export async function scrap(url: string): Promise<any> {
   const imagesBase64 = await Promise.all(
     mainImgSrcs.map(async (imgSrc) => {
       const response = await fetch(imgSrc);
-      const buffer = await response.buffer();
+      const arrBuf = await response.arrayBuffer();
       const contentType = response.headers.get('Content-Type');
-      return `data:${contentType};base64,` + buffer.toString('base64'); // 이미지를 Base64로 인코딩
+      const base64String = Buffer.from(arrBuf).toString('base64');
+      return `data:${contentType};base64,` + base64String; // 이미지를 Base64로 인코딩
     })
   );
   timer.end();
