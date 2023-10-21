@@ -9,6 +9,9 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+    "@mui/material": "^5.14.14",
     "cheerio": "^1.0.0-rc.12",
     "next": "13.5.6",
     "node-fetch": "^3.3.2",
