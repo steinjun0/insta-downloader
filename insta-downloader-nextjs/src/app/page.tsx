@@ -12,7 +12,17 @@ export default function Home() {
   return (
     <main>
       <Container sx={{ display: 'flex', flexDirection: 'column', gap: '16px', paddingTop: '32px', paddingBottom: '32px' }}>
-        <h1>Instagram Image Downloader</h1>
+        <Box>
+          <Image
+            src="/logo-100.png"
+            alt="ig image downloader"
+            width={50}
+            height={50}
+            objectFit="contain"
+          />
+          <h1>Instagram Image Downloader</h1>
+        </Box>
+
         <Box
           sx={{
             display: 'flex',
