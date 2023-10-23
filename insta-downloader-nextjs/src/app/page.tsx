@@ -9,6 +9,14 @@ export default function Home() {
   const [url, setUrl] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
+  const onScrap = async () => {
+    setImgSrcs([]);
+    setIsLoading(true);
+    const imgSrcs = await fetch(`/api/scrap?` + new URLSearchParams({ url: url }), { cache: 'force-cache' });
+    setImgSrcs(await imgSrcs.json());
+    setIsLoading(false);
+  };
+
   return (
     <main>
       <Container sx={{ display: 'flex', flexDirection: 'column', gap: '16px', paddingTop: '32px', paddingBottom: '32px' }}>
@@ -37,6 +45,13 @@ export default function Home() {
             label="URL"
             variant="outlined"
             value={url}
+            autoComplete='off'
+            onKeyDown={(e) => {
+              // enter 입력시 스크랩
+              if (e.key === 'Enter') {
+                onScrap();
+              }
+            }}
             onChange={(e) => setUrl(e.target.value)}
             placeholder="URL을 입력하세요."
             disabled={isLoading}
@@ -46,11 +61,7 @@ export default function Home() {
             color="primary"
             sx={{ width: '100px', height: '56px' }}
             onClick={async () => {
-              setImgSrcs([]);
-              setIsLoading(true);
-              const imgSrcs = await fetch(`/api/scrap?` + new URLSearchParams({ url: url }), { cache: 'force-cache' });
-              setImgSrcs(await imgSrcs.json());
-              setIsLoading(false);
+              onScrap();
             }}
             disabled={isLoading}
           >
@@ -89,7 +100,9 @@ export default function Home() {
                       onClick={() => {
                         const link = document.createElement('a');
                         link.href = src;
-                        link.download = `image-${i}.png`;
+                        const extensionsMap: { [key: string]: string; } = { 'image/jpeg': '.jpg', 'image/png': '.png', 'image/gif': '.gif', 'image/webp': '.webp' };
+                        const extension = extensionsMap[src.match(/data:([^;]+);/)![1]] || null;
+                        link.download = `${Date.now()}.${extension}`;
                         document.body.appendChild(link);
                         link.click();
                         document.body.removeChild(link);
